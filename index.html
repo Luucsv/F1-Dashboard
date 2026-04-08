@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>2021 F1 Race Results</title>
+<style>
+body { font-family: Arial, sans-serif; background: #f5f5f5; padding: 20px; }
+.container { background: white; border-radius: 12px; padding: 20px; max-width: 900px; margin: 0 auto; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+h1 { font-size: 22px; font-weight: 600; margin-bottom: 4px; }
+.subtitle { font-size: 13px; color: #666; margin-bottom: 16px; }
+select { padding: 8px 12px; border-radius: 8px; border: 1px solid #ddd; font-size: 13px; margin-bottom: 16px; }
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+th { padding: 8px 12px; text-align: left; font-weight: 500; font-size: 12px; color: #666; border-bottom: 1px solid #eee; }
+td { padding: 10px 12px; border-bottom: 1px solid #f0f0f0; }
+tr:hover td { background: #fafafa; }
+.pos { font-size: 16px; font-weight: 600; text-align: center; }
+.driver-cell { display: flex; align-items: center; gap: 10px; }
+.avatar { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; flex-shrink: 0; color: white; }
+.badge { display: inline-flex; align-items: center; padding: 3px 8px; border-radius: 6px; font-size: 12px; font-weight: 500; min-width: 48px; justify-content: center; }
+.gained { background: #EAF3DE; color: #3B6D11; }
+.lost { background: #FCEBEB; color: #A32D2D; }
+.neutral { background: #f0f0f0; color: #666; }
+.header-row { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin-bottom: 16px; }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header-row">
+    <div>
+      <h1>What happened in every race?</h1>
+      <div class="subtitle">2021 Formula 1 Season — all 22 rounds</div>
+    </div>
+    <div>
+      <select id="raceSelect" onchange="renderTable()"></select>
+    </div>
+  </div>
+  <div style="overflow-x: auto;">
+    <table>
+      <thead>
+        <tr>
+          <th style="width:48px;">Pos</th>
+          <th>Driver</th>
+          <th>Team</th>
+          <th style="text-align:center;">Points</th>
+          <th style="text-align:center;">Grid</th>
+          <th style="text-align:center;">Status</th>
+          <th style="text-align:center;">+/-</th>
+        </tr>
+      </thead>
+      <tbody id="tableBody"></tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+const teams = {
+  "Verstappen": { team: "Red Bull", color: "#1E3A5F" },
+  "Hamilton": { team: "Mercedes", color: "#00A19C" },
+  "Bottas": { team: "Mercedes", color: "#00A19C" },
+  "Pérez": { team: "Red Bull", color: "#1E3A5F" },
+  "Leclerc": { team: "Ferrari", color: "#DC0000" },
+  "Sainz": { team: "Ferrari", color: "#DC0000" },
+  "Norris": { team: "McLaren", color: "#FF8000" },
+  "Ricciardo": { team: "McLaren", color: "#FF8000" },
+  "Vettel": { team: "Aston Martin", color: "#006F62" },
+  "Stroll": { team: "Aston Martin", color: "#006F62" },
+  "Gasly": { team: "AlphaTauri", color: "#2B4562" },
+  "Tsunoda": { team: "AlphaTauri", color: "#2B4562" },
+  "Alonso": { team: "Alpine", color: "#0090FF" },
+  "Ocon": { team: "Alpine", color: "#0090FF" },
+  "Räikkönen": { team: "Alfa Romeo", color: "#900000" },
+  "Giovinazzi": { team: "Alfa Romeo", color: "#900000" },
+  "Russell": { team: "Williams", color: "#005AFF" },
+  "Latifi": { team: "Williams", color: "#005AFF" },
+  "Schumacher": { team: "Haas", color: "#787878" },
+  "Mazepin": { team: "Haas", color: "#787878" },
+};
+
+const races = [
+  { name: "Bahrain Grand Prix", round: 1, results: [
+    { pos:1, driver:"Hamilton", grid:1, points:25, status:"Finished" },
+    { pos:2, driver:"Verstappen", grid:2, points:18, status:"Finished" },
+    { pos:3, driver:"Bottas", grid:3, points:15, status:"Finished" },
+    { pos:4, driver:"Pérez", grid:11, points:12, status:"Finished" },
+    { pos:5, driver:"Sainz", grid:4, points:10, status:"Finished" },
+    { pos:6, driver:"Norris", grid:5, points:8, status:"Finished" },
+    { pos:7, driver:"Leclerc", grid:6, points:6, status:"Finished" },
+    { pos:8, driver:"Ricciardo", grid:7, points:4, status:"Finished" },
+    { pos:9, driver:"Vettel", grid:8, points:2, status:"Finished" },
+    { pos:10, driver:"Stroll", grid:9, points:1, status:"Finished" },
+    { pos:11, driver:"Gasly", grid:10, points:0, status:"Finished" },
+    { pos:12, driver:"Ocon", grid:12, points:0, status:"Finished" },
+    { pos:13, driver:"Alonso", grid:13, points:0, status:"Finished" },
+    { pos:14, driver:"Tsunoda", grid:14, points:0, status:"Finished" },
+    { pos:15, driver:"Russell", grid:15, points:0, status:"Finished" },
+    { pos:16, driver:"Latifi", grid:16, points:0, status:"Finished" },
+    { pos:17, driver:"Räikkönen", grid:17, points:0, status:"Finished" },
+    { pos:18, driver:"Giovinazzi", grid:18, points:0, status:"Finished" },
+    { pos:19, driver:"Schumacher", grid:19, points:0, status:"Finished" },
+    { pos:20, driver:"Mazepin", grid:20, points:0, status:"DNF" },
+  ]},
+  { name: "Emilia Romagna Grand Prix", round: 2, results: [
+    { pos:1, driver:"Verstappen", grid:1, points:26, status:"Finished" },
+    { pos:2, driver:"Hamilton", grid:2, points:18, status:"Finished" },
+    { pos:3, driver:"Bottas", grid:4, points:15, status:"Finished" },
+    { pos:4, driver:"Pérez", grid:3, points:12, status:"Finished" },
+    { pos:5, driver:"Sainz", grid:5, points:10, status:"Finished" },
+    { pos:6, driver:"Leclerc", grid:7, points:8, status:"Finished" },
+    { pos:7, driver:"Norris", grid:6, points:6, status:"Finished" },
+    { pos:8, driver:"Ricciardo", grid:8, points:4, status:"Finished" },
+    { pos:9, driver:"Ocon", grid:11, points:2, status:"Finished" },
+    { pos:10, driver:"Gasly", grid:9, points:1, status:"Finished" },
+    { pos:11, driver:"Vettel", grid:13, points:0, status:"Finished" },
+    { pos:12, driver:"Tsunoda", grid:10, points:0, status:"Finished" },
+    { pos:13, driver:"Stroll", grid:12, points:0, status:"Finished" },
+    { pos:14, driver:"Russell", grid:14, points:0, status:"Finished" },
+    { pos:15, driver:"Latifi", grid:15, points:0, status:"Finished" },
+    { pos:16, driver:"Schumacher", grid:16, points:0, status:"Finished" },
+    { pos:17, driver:"Mazepin", grid:17, points:0, status:"Finished" },
+    { pos:18, driver:"Räikkönen", grid:18, points:0, status:"Finished" },
+    { pos:19, driver:"Giovinazzi", grid:14, points:0, status:"Finished" },
+    { pos:20, driver:"Alonso", grid:20, points:0, status:"DNF" },
+  ]},
+  { name: "Portuguese Grand Prix", round: 3, results: [
+    { pos:1, driver:"Hamilton", grid:2, points:25, status:"Finished" },
+    { pos:2, driver:"Verstappen", grid:1, points:18, status:"Finished" },
+    { pos:3, driver:"Bottas", grid:3, points:15, status:"Finished" },
+    { pos:4, driver:"Pérez", grid:4, points:12, status:"Finished" },
+    { pos:5, driver:"Sainz", grid:6, points:10, status:"Finished" },
+    { pos:6, driver:"Gasly", grid:7, points:8, status:"Finished" },
+    { pos:7, driver:"Leclerc", grid:5, points:6, status:"Finished" },
+    { pos:8, driver:"Norris", grid:8, points:4, status:"Finished" },
+    { pos:9, driver:"Vettel", grid:9, points:2, status:"Finished" },
+    { pos:10, driver:"Alonso", grid:10, points:1, status:"Finished" },
+    { pos:11, driver:"Tsunoda", grid:11, points:0, status:"Finished" },
+    { pos:12, driver:"Stroll", grid:12, points:0, status:"Finished" },
+    { pos:13, driver:"Räikkönen", grid:13, points:0, status:"Finished" },
+    { pos:14, driver:"Ocon", grid:14, points:0, status:"Finished" },
+    { pos:15, driver:"Russell", grid:15, points:0, status:"Finished" },
+    { pos:16, driver:"Giovinazzi", grid:16, points:0, status:"Finished" },
+    { pos:17, driver:"Latifi", grid:17, points:0, status:"Finished" },
+    { pos:18, driver:"Schumacher", grid:18, points:0, status:"Finished" },
+    { pos:19, driver:"Ricciardo", grid:19, points:0, status:"Finished" },
+    { pos:20, driver:"Mazepin", grid:20, points:0, status:"Finished" },
+  ]},
+  { name: "Spanish Grand Prix", round: 4, results: [
+    { pos:1, driver:"Hamilton", grid:1, points:25, status:"Finished" },
+    { pos:2, driver:"Verstappen", grid:2, points:18, status:"Finished" },
+    { pos:3, driver:"Bottas", grid:3, points:15, status:"Finished" },
+    { pos:4, driver:"Norris", grid:4, points:12, status:"Finished" },
+    { pos:5, driver:"Leclerc", grid:5, points:10, status:"Finished" },
+    { pos:6, driver:"Sainz", grid:6, points:8, status:"Finished" },
+    { pos:7, driver:"Ricciardo", grid:7, points:6, status:"Finished" },
+    { pos:8, driver:"Gasly", grid:8, points:4, status:"Finished" },
+    { pos:9, driver:"Alonso", grid:9, points:2, status:"Finished" },
+    { pos:10, driver:"Ocon", grid:10, points:1, status:"Finished" },
+    { pos:11, driver:"Tsunoda", grid:11, points:0, status:"Finished" },
+    { pos:12, driver:"Stroll", grid:12, points:0, status:"Finished" },
+    { pos:13, driver:"Räikkönen", grid:13, points:0, status:"Finished" },
+    { pos:14, driver:"Giovinazzi", grid:14, points:0, status:"Finished" },
+    { pos:15, driver:"Russell", grid:15, points:0, status:"Finished" },
+    { pos:16, driver:"Latifi", grid:16, points:0, status:"Finished" },
+    { pos:17, driver:"Schumacher", grid:17, points:0, status:"Finished" },
+    { pos:18, driver:"Mazepin", grid:18, points:0, status:"Finished" },
+    { pos:19, driver:"Vettel", grid:19, points:0, status:"DNF" },
+    { pos:20, driver:"Pérez", grid:20, points:0, status:"DNF" },
+  ]},
+  { name: "Monaco Grand Prix", round: 5, results: [
+    { pos:1, driver:"Verstappen", grid:2, points:25, status:"Finished" },
+    { pos:2, driver:"Sainz", grid:3, points:18, status:"Finished" },
+    { pos:3, driver:"Leclerc", grid:1, points:15, status:"Finished" },
+    { pos:4, driver:"Norris", grid:4, points:12, status:"Finished" },
+    { pos:5, driver:"Vettel", grid:5, points:10, status:"Finished" },
+    { pos:6, driver:"Alonso", grid:6, points:8, status:"Finished" },
+    { pos:7, driver:"Bottas", grid:7, points:6, status:"Finished" },
+    { pos:8, driver:"Gasly", grid:8, points:4, status:"Finished" },
+    { pos:9, driver:"Hamilton", grid:9, points:2, status:"Finished" },
+    { pos:10, driver:"Pérez", grid:10, points:1, status:"Finished" },
+    { pos:11, driver:"Ocon", grid:11, points:0, status:"Finished" },
+    { pos:12, driver:"Stroll", grid:12, points:0, status:"Finished" },
+    { pos:13, driver:"Räikkönen", grid:13, points:0, status:"Finished" },
+    { pos:14, driver:"Tsunoda", grid:14, points:0, status:"Finished" },
+    { pos:15, driver:"Giovinazzi", grid:15, points:0, status:"Finished" },
+    { pos:16, driver:"Russell", grid:16, points:0, status:"Finished" },
+    { pos:17, driver:"Latifi", grid:17, points:0, status:"Finished" },
+    { pos:18, driver:"Ricciardo", grid:18, points:0, status:"DNF" },
+    { pos:19, driver:"Schumacher", grid:19, points:0, status:"Finished" },
+    { pos:20, driver:"Mazepin", grid:20, points:0, status:"Finished" },
+  ]},
+  { name: "Azerbaijan Grand Prix", round: 6, results: [
+    { pos:1, driver:"Pérez", grid:3, points:25, status:"Finished" },
+    { pos:2, driver:"Vettel", grid:9, points:18, status:"Finished" },
+    { pos:3, driver:"Gasly", grid:4, points:15, status:"Finished" },
+    { pos:4, driver:"Hamilton", grid:2, points:12, status:"Finished" },
+    { pos:5, driver:"Leclerc", grid:8, points:10, status:"Finished" },
+    { pos:6, driver:"Sainz", grid:6, points:8, status:"Finished" },
+    { pos:7, driver:"Tsunoda", grid:11, points:6, status:"Finished" },
+    { pos:8, driver:"Ocon", grid:12, points:4, status:"Finished" },
+    { pos:9, driver:"Stroll", grid:10, points:2, status:"Finished" },
+    { pos:10, driver:"Giovinazzi", grid:13, points:1, status:"Finished" },
+    { pos:11, driver:"Räikkönen", grid:14, points:0, status:"Finished" },
+    { pos:12, driver:"Russell", grid:15, points:0, status:"Finished" },
+    { pos:13, driver:"Latifi", grid:19, points:0, status:"Finished" },
+    { pos:14, driver:"Norris", grid:5, points:0, status:"DNF" },
+    { pos:15, driver:"Schumacher", grid:16, points:0, status:"Finished" },
+    { pos:16, driver:"Mazepin", grid:17, points:0, status:"Finished" },
+    { pos:17, driver:"Alonso", grid:7, points:0, status:"DNF" },
+    { pos:18, driver:"Ricciardo", grid:18, points:0, status:"DNF" },
+    { pos:19, driver:"Verstappen", grid:1, points:0, status:"DNF" },
+    { pos:20, driver:"Bottas", grid:20, points:0, status:"DNF" },
+  ]},
+  { name: "French Grand Prix", round: 7, results: [
+    { pos:1, driver:"Verstappen", grid:1, points:25, status:"Finished" },
+    { pos:2, driver:"Hamilton", grid:2, points:18, status:"Finished" },
+    { pos:3, driver:"Bottas", grid:3, points:15, status:"Finished" },
+    { pos:4, driver:"Pérez", grid:4, points:12, status:"Finished" },
+    { pos:5, driver:"Sainz", grid:5, points:10, status:"Finished" },
+    { pos:6, driver:"Leclerc", grid:6, points:8, status:"Finished" },
+    { pos:7, driver:"Norris", grid:7, points:6, status:"Finished" },
+    { pos:8, driver:"Alonso", grid:8, points:4, status:"Finished" },
+    { pos:9, driver:"Gasly", grid:9, points:2, status:"Finished" },
+    { pos:10, driver:"Ricciardo", grid:10, points:1, status:"Finished" },
+    { pos:11, driver:"Vettel", grid:11, points:0, status:"Finished" },
+    { pos:12, driver:"Stroll", grid:12, points:0, status:"Finished" },
+    { pos:13, driver:"Ocon", grid:13, points:0, status:"Finished" },
+    { pos:14, driver:"Tsunoda", grid:20, points:0, status:"Finished" },
+    { pos:15, driver:"Russell", grid:14, points:0, status:"Finished" },
+    { pos:16, driver:"Giovinazzi", grid:15, points:0, status:"Finished" },
+    { pos:17, driver:"Latifi", grid:16, points:0, status:"Finished" },
+    { pos:18, driver:"Räikkönen", grid:17, points:0, status:"Finished" },
+    { pos:19, driver:"Schumacher", grid:18, points:0, status:"Finished" },
+    { pos:20, driver:"Mazepin", grid:19, points:0, status:"Finished" },
+  ]},
+  { name: "Styrian Grand Prix", round: 8, results: [
+    { pos:1, driver:"Verstappen", grid:1, points:25, status:"Finished" },
+    { pos:2, driver:"Hamilton", grid:2, points:18, status:"Finished" },
+    { pos:3, driver:"Norris", grid:3, points:15, status:"Finished" },
+    { pos:4, driver:"Bottas", grid:4, points:12, status:"Finished" },
+    { pos:5, driver:"Pérez", grid:5, points:10, status:"Finished" },
+    { pos:6, driver:"Sainz", grid:6, points:8, status:"Finished" },
+    { pos:7, driver:"Alonso", grid:7, points:6, status:"Finished" },
+    { pos:8, driver:"Leclerc", grid:8, points:4, status:"Finished" },
+    { pos:9, driver:"Tsunoda", grid:9, points:2, status:"Finished" },
+    { pos:10, driver:"Ricciardo", grid:10, points:1, status:"Finished" },
+    { pos:11, driver:"Vettel", grid:11, points:0, status:"Finished" },
+    { pos:12, driver:"Stroll", grid:12, points:0, status:"Finished" },
+    { pos:13, driver:"Gasly", grid:13, points:0, status:"Finished" },
+    { pos:14, driver:"Giovinazzi", grid:14, points:0, status:"Finished" },
+    { pos:15, driver:"Räikkönen", grid:15, points:0, status:"Finished" },
+    { pos:16, driver:"Russell", grid:16, points:0, status:"Finished" },
+    { pos:17, driver:"Latifi", grid:17, points:0, status:"Finished" },
+    { pos:18, driver:"Schumacher", grid:18, points:0, status:"Finished" },
+    { pos:19, driver:"Ocon", grid:19, points:0, status:"DNF" },
+    { pos:20, driver:"Mazepin", grid:20, points:0, status:"Finished" },
+  ]},
+  { name: "Austrian Grand Prix", round: 9, results: [
+    { pos:1, driver:"Verstappen", grid:1, points:25, status:"Finished" },
+    { pos:2, driver:"Norris", grid:2, points:18, status:"Finished" },
+    { pos:3, driver:"Bottas", grid:3, points:15, status:"Finished" },
+    { pos:4, driver:"Pérez", grid:4, points:12, status:"Finished" },
+    { pos:5, driver:"Hamilton", grid:5, points:10, status:"Finished" },
+    { pos:6, driver:"Alonso", grid:6, points:8, status:"Finished" },
+    { pos:7, driver:"Sainz", grid:7, points:6, status:"Finished" },
+    { pos:8, driver:"Gasly", grid:8, points:4, status:"Finished" },
+    { pos:9, driver:"Leclerc", grid:9, points:2, status:"Finished" },
+    { pos:10, driver:"Ricciardo", grid:10, points:1, status:"Finished" },
+    { pos:11, driver:"Ocon", grid:11, points:0, status:"Finished" },
+    { pos:12, driver:"Vettel", grid:12, points:0, status:"Finished" },
+    { pos:13, driver:"Stroll", grid:13, points:0, status:"Finished" },
+    { pos:14, driver:"Tsunoda", grid:14, points:0, status:"Finished" },
+    { pos:15, driver:"Schumacher", grid:15, points:0, status:"Finished" },
+    { pos:16, driver:"Räikkönen", grid:16, points:0, status:"Finished" },
+    { pos:17, driver:"Giovinazzi", grid:17, points:0, status:"Finished" },
+    { pos:18, driver:"Latifi", grid:18, points:0, status:"Finished" },
+    { pos:19, driver:"Russell", grid:19, points:0, status:"Finished" },
+    { pos:20, driver:"Mazepin", grid:20, points:0, status:"Finished" },
+  ]},
+  { name: "British Grand Prix", round: 10, results: [
+    { pos:1, driver:"Hamilton", grid:1, points:25, status:"Finished" },
+    { pos:2, driver:"Leclerc", grid:2, points:18, status:"Finished" },
+    { pos:3, driver:"Bottas", grid:3, points:15, status:"Finished" },
+    { pos:4, driver:"Norris", grid:4, points:12, status:"Finished" },
+    { pos:5, driver:"Alonso", grid:5, points:10, status:"Finished" },
+    { pos:6, driver:"Sainz", grid:6, points:8, status:"Finished" },
+    { pos:7, driver:"Gasly", grid:7, points:6, status:"Finished" },
+    { pos:8, driver:"Ocon", grid:8, points:4, status:"Finished" },
+    { pos:9, driver:"Vettel", grid:9, points:2, status:"Finished" },
+    { pos:10, driver:"Stroll", grid:10, points:1, status:"Finished" },
+    { pos:11, driver:"Ricciardo", grid:11, points:0, status:"Finished" },
+    { pos:12, driver:"Tsunoda", grid:12, points:0, status:"Finished" },
+    { pos:13, driver:"Russell", grid:13, points:0, status:"Finished" },
+    { pos:14, driver:"Latifi", grid:14, points:0, status:"Finished" },
+    { pos:15, driver:"Räikkönen", grid:15, points:0, status:"Finished" },
+    { pos:16, driver:"Giovinazzi", grid:16, points:0, status:"Finished" },
+    { pos:17, driver:"Schumacher", grid:17, points:0, status:"Finished" },
+    { pos:18, driver:"Mazepin", grid:18, points:0, status:"Finished" },
+    { pos:19, driver:"Pérez", grid:20, points:0, status:"DNF" },
+    { pos:20, driver:"Verstappen", grid:19, points:0, status:"DNF" },
+  ]},
+  { name: "Hungarian Grand Prix", round: 11, results: [
+    { pos:1, driver:"Ocon", grid:3, points:25, status:"Finished" },
+    { pos:2, driver:"Vettel", grid:4, points:18, status:"Finished" },
+    { pos:3, driver:"Hamilton", grid:9, points:15, status:"Finished" },
+    { pos:4, driver:"Alonso", grid:5, points:12, status:"Finished" },
+    { pos:5, driver:"Gasly", grid:9, points:10, status:"Finished" },
+    { pos:6, driver:"Sainz", grid:6, points:8, status:"Finished" },
+    { pos:7, driver:"Norris", grid:3, points:6, status:"Finished" },
+    { pos:8, driver:"Leclerc", grid:8, points:4, status:"Finished" },
+    { pos:9, driver:"Pérez", grid:11, points:2, status:"Finished" },
+    { pos:10, driver:"Tsunoda", grid:12, points:1, status:"Finished" },
+    { pos:11, driver:"Russell", grid:13, points:0, status:"Finished" },
+    { pos:12, driver:"Latifi", grid:14, points:0, status:"Finished" },
+    { pos:13, driver:"Schumacher", grid:15, points:0, status:"Finished" },
+    { pos:14, driver:"Räikkönen", grid:16, points:0, status:"Finished" },
+    { pos:15, driver:"Giovinazzi", grid:14, points:0, status:"Finished" },
+    { pos:16, driver:"Mazepin", grid:17, points:0, status:"Finished" },
+    { pos:17, driver:"Ricciardo", grid:18, points:0, status:"Finished" },
+    { pos:18, driver:"Stroll", grid:19, points:0, status:"DNF" },
+    { pos:19, driver:"Bottas", grid:20, points:0, status:"DNF" },
+    { pos:20, driver:"Verstappen", grid:2, points:0, status:"DNF" },
+  ]},
+  { name: "Belgian Grand Prix", round: 12, results: [
+    { pos:1, driver:"Verstappen", grid:1, points:12, status:"Finished" },
+    { pos:2, driver:"Russell", grid:2, points:9, status:"Finished" },
+    { pos:3, driver:"Hamilton", grid:3, points:6, status:"Finished" },
+    { pos:4, driver:"Norris", grid:4, points:0, status:"Finished" },
+    { pos:5, driver:"Vettel", grid:5, points:0, status:"Finished" },
+    { pos:6, driver:"Pérez", grid:7, points:0, status:"Finished" },
+    { pos:7, driver:"Leclerc", grid:8, points:0, status:"Finished" },
+    { pos:8, driver:"Alonso", grid:9, points:0, status:"Finished" },
+    { pos:9, driver:"Gasly", grid:10, points:0, status:"Finished" },
+    { pos:10, driver:"Stroll", grid:11, points:0, status:"Finished" },
+    { pos:11, driver:"Latifi", grid:12, points:0, status:"Finished" },
+    { pos:12, driver:"Räikkönen", grid:19, points:0, status:"Finished" },
+    { pos:13, driver:"Schumacher", grid:13, points:0, status:"Finished" },
+  ]},
+  { name: "Dutch Grand Prix", round: 13, results: [
+    { pos:1, driver:"Verstappen", grid:1, points:25, status:"Finished" },
+    { pos:2, driver:"Alonso", grid:4, points:18, status:"Finished" },
+    { pos:3, driver:"Hamilton", grid:2, points:15, status:"Finished" },
+    { pos:4, driver:"Bottas", grid:3, points:12, status:"Finished" },
+    { pos:5, driver:"Gasly", grid:5, points:10, status:"Finished" },
+    { pos:6, driver:"Leclerc", grid:6, points:8, status:"Finished" },
+    { pos:7, driver:"Sainz", grid:7, points:6, status:"Finished" },
+    { pos:8, driver:"Pérez", grid:20, points:4, status:"Finished" },
+    { pos:9, driver:"Ocon", grid:9, points:2, status:"Finished" },
+    { pos:10, driver:"Norris", grid:10, points:1, status:"Finished" },
+    { pos:11, driver:"Stroll", grid:11, points:0, status:"Finished" },
+    { pos:12, driver:"Tsunoda", grid:12, points:0, status:"Finished" },
+    { pos:13, driver:"Vettel", grid:13, points:0, status:"Finished" },
+    { pos:14, driver:"Ricciardo", grid:14, points:0, status:"Finished" },
+    { pos:15, driver:"Russell", grid:15, points:0, status:"Finished" },
+    { pos:16, driver:"Giovinazzi", grid:16, points:0, status:"Finished" },
+    { pos:17, driver:"Räikkönen", grid:17, points:0, status:"Finished" },
+    { pos:18, driver:"Latifi", grid:19, points:0, status:"Finished" },
+    { pos:19, driver:"Schumacher", grid:18, points:0, status:"Finished" },
+    { pos:20, driver:"Mazepin", grid:20, points:0, status:"Finished" },
+  ]},
+  { name: "Italian Grand Prix", round: 14, results: [
+    { pos:1, driver:"Ricciardo", grid:5, points:25, status:"Finished" },
+    { pos:2, driver:"Norris", grid:3, points:18, status:"Finished" },
+    { pos:3, driver:"Bottas", grid:2, points:15, status:"Finished" },
+    { pos:4, driver:"Leclerc", grid:4, points:12, status:"Finished" },
+    { pos:5, driver:"Sainz", grid:6, points:10, status:"Finished" },
+    { pos:6, driver:"Tsunoda", grid:15, points:8, status:"Finished" },
+    { pos:7, driver:"Gasly", grid:20, points:6, status:"Finished" },
+    { pos:8, driver:"Stroll", grid:7, points:4, status:"Finished" },
+    { pos:9, driver:"Räikkönen", grid:8, points:2, status:"Finished" },
+    { pos:10, driver:"Giovinazzi", grid:9, points:1, status:"Finished" },
+    { pos:11, driver:"Schumacher", grid:10, points:0, status:"Finished" },
+    { pos:12, driver:"Latifi", grid:11, points:0, status:"Finished" },
+    { pos:13, driver:"Mazepin", grid:12, points:0, status:"Finished" },
+    { pos:14, driver:"Alonso", grid:13, points:0, status:"Finished" },
+    { pos:15, driver:"Ocon", grid:14, points:0, status:"Finished" },
+    { pos:16, driver:"Vettel", grid:16, points:0, status:"DNF" },
+    { pos:17, driver:"Russell", grid:17, points:0, status:"DNF" },
+    { pos:18, driver:"Hamilton", grid:18, points:0, status:"DNF" },
+    { pos:19, driver:"Verstappen", grid:19, points:0, status:"DNF" },
+    { pos:20, driver:"Pérez", grid:1, points:0, status:"DNF" },
+  ]},
+  { name: "Russian Grand Prix", round: 15, results: [
+    { pos:1, driver:"Hamilton", grid:4, points:25, status:"Finished" },
+    { pos:2, driver:"Verstappen", grid:20, points:18, status:"Finished" },
+    { pos:3, driver:"Sainz", grid:3, points:15, status:"Finished" },
+    { pos:4, driver:"Norris", grid:1, points:12, status:"Finished" },
+    { pos:5, driver:"Ricciardo", grid:5, points:10, status:"Finished" },
+    { pos:6, driver:"Leclerc", grid:6, points:8, status:"Finished" },
+    { pos:7, driver:"Bottas", grid:7, points:6, status:"Finished" },
+    { pos:8, driver:"Gasly", grid:8, points:4, status:"Finished" },
+    { pos:9, driver:"Alonso", grid:9, points:2, status:"Finished" },
+    { pos:10, driver:"Ocon", grid:10, points:1, status:"Finished" },
+    { pos:11, driver:"Tsunoda", grid:11, points:0, status:"Finished" },
+    { pos:12, driver:"Vettel", grid:12, points:0, status:"Finished" },
+    { pos:13, driver:"Stroll", grid:13, points:0, status:"Finished" },
+    { pos:14, driver:"Räikkönen", grid:14, points:0, status:"Finished" },
+    { pos:15, driver:"Giovinazzi", grid:15, points:0, status:"Finished" },
+    { pos:16, driver:"Russell", grid:16, points:0, status:"Finished" },
+    { pos:17, driver:"Latifi", grid:17, points:0, status:"Finished" },
+    { pos:18, driver:"Schumacher", grid:18, points:0, status:"Finished" },
+    { pos:19, driver:"Mazepin", grid:19, points:0, status:"Finished" },
+    { pos:20, driver:"Pérez", grid:2, points:0, status:"DNF" },
+  ]},
+  { name: "Turkish Grand Prix", round: 16, results: [
+    { pos:1, driver:"Bottas", grid:1, points:25, status:"Finished" },
+    { pos:2, driver:"Verstappen", grid:2, points:18, status:"Finished" },
+    { pos:3, driver:"Pérez", grid:3, points:15, status:"Finished" },
+    { pos:4, driver:"Hamilton", grid:11, points:12, status:"Finished" },
+    { pos:5, driver:"Leclerc", grid:5, points:10, status:"Finished" },
+    { pos:6, driver:"Sainz", grid:6, points:8, status:"Finished" },
+    { pos:7, driver:"Alonso", grid:7, points:6, status:"Finished" },
+    { pos:8, driver:"Norris", grid:8, points:4, status:"Finished" },
+    { pos:9, driver:"Gasly", grid:9, points:2, status:"Finished" },
+    { pos:10, driver:"Vettel", grid:10, points:1, status:"Finished" },
+    { pos:11, driver:"Stroll", grid:12, points:0, status:"Finished" },
+    { pos:12, driver:"Tsunoda", grid:13, points:0, status:"Finished" },
+    { pos:13, driver:"Räikkönen", grid:14, points:0, status:"Finished" },
+    { pos:14, driver:"Giovinazzi", grid:15, points:0, status:"Finished" },
+    { pos:15, driver:"Ricciardo", grid:16, points:0, status:"Finished" },
+    { pos:16, driver:"Schumacher", grid:17, points:0, status:"Finished" },
+    { pos:17, driver:"Russell", grid:18, points:0, status:"Finished" },
+    { pos:18, driver:"Latifi", grid:19, points:0, status:"Finished" },
+    { pos:19, driver:"Mazepin", grid:20, points:0, status:"Finished" },
+    { pos:20, driver:"Ocon", grid:4, points:0, status:"DNF" },
+  ]},
+  { name: "United States Grand Prix", round: 17, results: [
+    { pos:1, driver:"Verstappen", grid:1, points:26, status:"Finished" },
+    { pos:2, driver:"Hamilton", grid:2, points:18, status:"Finished" },
+    { pos:3, driver:"Norris", grid:3, points:15, status:"Finished" },
+    { pos:4, driver:"Bottas", grid:4, points:12, status:"Finished" },
+    { pos:5, driver:"Sainz", grid:5, points:10, status:"Finished" },
+    { pos:6, driver:"Leclerc", grid:6, points:8, status:"Finished" },
+    { pos:7, driver:"Pérez", grid:7, points:6, status:"Finished" },
+    { pos:8, driver:"Ricciardo", grid:8, points:4, status:"Finished" },
+    { pos:9, driver:"Alonso", grid:9, points:2, status:"Finished" },
+    { pos:10, driver:"Gasly", grid:10, points:1, status:"Finished" },
+    { pos:11, driver:"Ocon", grid:11, points:0, status:"Finished" },
+    { pos:12, driver:"Stroll", grid:12, points:0, status:"Finished" },
+    { pos:13, driver:"Vettel", grid:13, points:0, status:"Finished" },
+    { pos:14, driver:"Tsunoda", grid:14, points:0, status:"Finished" },
+    { pos:15, driver:"Latifi", grid:15, points:0, status:"Finished" },
+    { pos:16, driver:"Russell", grid:16, points:0, status:"Finished" },
+    { pos:17, driver:"Schumacher", grid:17, points:0, status:"Finished" },
+    { pos:18, driver:"Räikkönen", grid:18, points:0, status:"Finished" },
+    { pos:19, driver:"Giovinazzi", grid:19, points:0, status:"Finished" },
+    { pos:20, driver:"Mazepin", grid:20, points:0, status:"Finished" },
+  ]},
+  { name: "Mexico City Grand Prix", round: 18, results: [
+    { pos:1, driver:"Verstappen", grid:3, points:25, status:"Finished" },
+    { pos:2, driver:"Hamilton", grid:2, points:18, status:"Finished" },
+    { pos:3, driver:"Pérez", grid:4, points:15, status:"Finished" },
+    { pos:4, driver:"Gasly", grid:5, points:12, status:"Finished" },
+    { pos:5, driver:"Leclerc", grid:8, points:10, status:"Finished" },
+    { pos:6, driver:"Sainz", grid:6, points:8, status:"Finished" },
+    { pos:7, driver:"Vettel", grid:9, points:6, status:"Finished" },
+    { pos:8, driver:"Räikkönen", grid:10, points:4, status:"Finished" },
+    { pos:9, driver:"Alonso", grid:12, points:2, status:"Finished" },
+    { pos:10, driver:"Norris", grid:18, points:1, status:"Finished" },
+    { pos:11, driver:"Giovinazzi", grid:11, points:0, status:"Finished" },
+    { pos:12, driver:"Ricciardo", grid:7, points:0, status:"Finished" },
+    { pos:13, driver:"Ocon", grid:19, points:0, status:"Finished" },
+    { pos:14, driver:"Stroll", grid:20, points:0, status:"Finished" },
+    { pos:15, driver:"Bottas", grid:1, points:0, status:"Finished" },
+    { pos:16, driver:"Russell", grid:16, points:0, status:"Finished" },
+    { pos:17, driver:"Schumacher", grid:17, points:0, status:"Finished" },
+    { pos:18, driver:"Mazepin", grid:18, points:0, status:"Finished" },
+    { pos:19, driver:"Tsunoda", grid:13, points:0, status:"DNF" },
+    { pos:20, driver:"Latifi", grid:15, points:0, status:"DNF" },
+  ]},
+  { name: "São Paulo Grand Prix", round: 19, results: [
+    { pos:1, driver:"Hamilton", grid:10, points:25, status:"Finished" },
+    { pos:2, driver:"Verstappen", grid:1, points:18, status:"Finished" },
+    { pos:3, driver:"Bottas", grid:2, points:15, status:"Finished" },
+    { pos:4, driver:"Sainz", grid:3, points:12, status:"Finished" },
+    { pos:5, driver:"Leclerc", grid:4, points:10, status:"Finished" },
+    { pos:6, driver:"Ocon", grid:5, points:8, status:"Finished" },
+    { pos:7, driver:"Alonso", grid:6, points:6, status:"Finished" },
+    { pos:8, driver:"Gasly", grid:7, points:4, status:"Finished" },
+    { pos:9, driver:"Norris", grid:8, points:2, status:"Finished" },
+    { pos:10, driver:"Vettel", grid:9, points:1, status:"Finished" },
+    { pos:11, driver:"Stroll", grid:11, points:0, status:"Finished" },
+    { pos:12, driver:"Tsunoda", grid:12, points:0, status:"Finished" },
+    { pos:13, driver:"Räikkönen", grid:20, points:0, status:"Finished" },
+    { pos:14, driver:"Russell", grid:13, points:0, status:"Finished" },
+    { pos:15, driver:"Latifi", grid:14, points:0, status:"Finished" },
+    { pos:16, driver:"Schumacher", grid:15, points:0, status:"Finished" },
+    { pos:17, driver:"Mazepin", grid:16, points:0, status:"Finished" },
+    { pos:18, driver:"Ricciardo", grid:17, points:0, status:"Finished" },
+    { pos:19, driver:"Giovinazzi", grid:18, points:0, status:"DNF" },
+    { pos:20, driver:"Pérez", grid:19, points:0, status:"DNF" },
+  ]},
+  { name: "Qatar Grand Prix", round: 20, results: [
+    { pos:1, driver:"Hamilton", grid:2, points:25, status:"Finished" },
+    { pos:2, driver:"Verstappen", grid:1, points:18, status:"Finished" },
+    { pos:3, driver:"Alonso", grid:3, points:15, status:"Finished" },
+    { pos:4, driver:"Norris", grid:4, points:12, status:"Finished" },
+    { pos:5, driver:"Sainz", grid:5, points:10, status:"Finished" },
+    { pos:6, driver:"Bottas", grid:6, points:8, status:"Finished" },
+    { pos:7, driver:"Leclerc", grid:7, points:6, status:"Finished" },
+    { pos:8, driver:"Ocon", grid:8, points:4, status:"Finished" },
+    { pos:9, driver:"Gasly", grid:9, points:2, status:"Finished" },
+    { pos:10, driver:"Vettel", grid:10, points:1, status:"Finished" },
+    { pos:11, driver:"Tsunoda", grid:11, points:0, status:"Finished" },
+    { pos:12, driver:"Stroll", grid:12, points:0, status:"Finished" },
+    { pos:13, driver:"Russell", grid:13, points:0, status:"Finished" },
+    { pos:14, driver:"Latifi", grid:14, points:0, status:"Finished" },
+    { pos:15, driver:"Schumacher", grid:15, points:0, status:"Finished" },
+    { pos:16, driver:"Mazepin", grid:16, points:0, status:"Finished" },
+    { pos:17, driver:"Ricciardo", grid:17, points:0, status:"Finished" },
+    { pos:18, driver:"Räikkönen", grid:18, points:0, status:"Finished" },
+    { pos:19, driver:"Giovinazzi", grid:19, points:0, status:"DNF" },
+    { pos:20, driver:"Pérez", grid:20, points:0, status:"DNF" },
+  ]},
+  { name: "Saudi Arabian Grand Prix", round: 21, results: [
+    { pos:1, driver:"Hamilton", grid:1, points:25, status:"Finished" },
+    { pos:2, driver:"Verstappen", grid:2, points:18, status:"Finished" },
+    { pos:3, driver:"Bottas", grid:3, points:15, status:"Finished" },
+    { pos:4, driver:"Ocon", grid:5, points:12, status:"Finished" },
+    { pos:5, driver:"Sainz", grid:6, points:10, status:"Finished" },
+    { pos:6, driver:"Leclerc", grid:7, points:8, status:"Finished" },
+    { pos:7, driver:"Alonso", grid:8, points:6, status:"Finished" },
+    { pos:8, driver:"Gasly", grid:9, points:4, status:"Finished" },
+    { pos:9, driver:"Norris", grid:10, points:2, status:"Finished" },
+    { pos:10, driver:"Tsunoda", grid:11, points:1, status:"Finished" },
+    { pos:11, driver:"Stroll", grid:12, points:0, status:"Finished" },
+    { pos:12, driver:"Vettel", grid:13, points:0, status:"Finished" },
+    { pos:13, driver:"Russell", grid:14, points:0, status:"Finished" },
+    { pos:14, driver:"Latifi", grid:15, points:0, status:"Finished" },
+    { pos:15, driver:"Schumacher", grid:16, points:0, status:"Finished" },
+    { pos:16, driver:"Mazepin", grid:17, points:0, status:"Finished" },
+    { pos:17, driver:"Räikkönen", grid:18, points:0, status:"Finished" },
+    { pos:18, driver:"Giovinazzi", grid:19, points:0, status:"Finished" },
+    { pos:19, driver:"Ricciardo", grid:20, points:0, status:"Finished" },
+    { pos:20, driver:"Pérez", grid:4, points:0, status:"DNF" },
+  ]},
+  { name: "Abu Dhabi Grand Prix", round: 22, results: [
+    { pos:1, driver:"Verstappen", grid:1, points:26, status:"Finished" },
+    { pos:2, driver:"Hamilton", grid:2, points:18, status:"Finished" },
+    { pos:3, driver:"Leclerc", grid:3, points:15, status:"Finished" },
+    { pos:4, driver:"Sainz", grid:4, points:12, status:"Finished" },
+    { pos:5, driver:"Gasly", grid:5, points:10, status:"Finished" },
+    { pos:6, driver:"Norris", grid:6, points:8, status:"Finished" },
+    { pos:7, driver:"Bottas", grid:7, points:6, status:"Finished" },
+    { pos:8, driver:"Vettel", grid:8, points:4, status:"Finished" },
+    { pos:9, driver:"Stroll", grid:9, points:2, status:"Finished" },
+    { pos:10, driver:"Ocon", grid:10, points:1, status:"Finished" },
+    { pos:11, driver:"Alonso", grid:11, points:0, status:"Finished" },
+    { pos:12, driver:"Ricciardo", grid:12, points:0, status:"Finished" },
+    { pos:13, driver:"Tsunoda", grid:13, points:0, status:"Finished" },
+    { pos:14, driver:"Räikkönen", grid:14, points:0, status:"Finished" },
+    { pos:15, driver:"Giovinazzi", grid:15, points:0, status:"Finished" },
+    { pos:16, driver:"Russell", grid:16, points:0, status:"Finished" },
+    { pos:17, driver:"Latifi", grid:17, points:0, status:"Finished" },
+    { pos:18, driver:"Schumacher", grid:18, points:0, status:"Finished" },
+    { pos:19, driver:"Pérez", grid:19, points:0, status:"DNF" },
+    { pos:20, driver:"Mazepin", grid:20, points:0, status:"Finished" },
+  ]},
+];
+
+function getInitials(s) { return s.substring(0,2).toUpperCase(); }
+
+function renderTable() {
+  const i = parseInt(document.getElementById('raceSelect').value);
+  const race = races[i];
+  const tbody = document.getElementById('tableBody');
+  tbody.innerHTML = '';
+  race.results.forEach(r => {
+    const t = teams[r.driver] || { team: "Unknown", color: "#888" };
+    const diff = r.grid - r.pos;
+    let cls = 'neutral', arrow = '—';
+    if (diff > 0) { cls = 'gained'; arrow = '▲'+diff; }
+    else if (diff < 0) { cls = 'lost'; arrow = '▼'+Math.abs(diff); }
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td class="pos">${r.pos}</td>
+      <td><div class="driver-cell"><div class="avatar" style="background:${t.color}">${getInitials(r.driver)}</div><strong>${r.driver}</strong></div></td>
+      <td style="color:#666">${t.team}</td>
+      <td style="text-align:center;font-weight:600">${r.points}</td>
+      <td style="text-align:center;color:#666">${r.grid}</td>
+      <td style="text-align:center;color:#666;font-size:12px">${r.status}</td>
+      <td style="text-align:center"><span class="badge ${cls}">${arrow}</span></td>`;
+    tbody.appendChild(tr);
+  });
+}
+
+const sel = document.getElementById('raceSelect');
+races.forEach((r,i) => {
+  const o = document.createElement('option');
+  o.value = i;
+  o.textContent = `R${r.round} — ${r.name}`;
+  sel.appendChild(o);
+});
+renderTable();
+</script>
+</body>
+</html>
