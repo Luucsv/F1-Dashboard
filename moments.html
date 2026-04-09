@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>2021 F1 Season — Critical Moments</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: Arial, sans-serif; background: #1a1a2e; padding: 24px; }
+.page-title { font-size: 24px; font-weight: 700; color: white; margin-bottom: 4px; }
+.page-sub { font-size: 13px; color: #aaa; margin-bottom: 24px; }
+.champ-bar { background: #16213e; border-radius: 10px; padding: 16px 20px; margin-bottom: 28px; }
+.champ-title { font-size: 13px; font-weight: 700; color: #aaa; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; }
+.drow { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+.dname { width: 110px; font-size: 13px; font-weight: 700; }
+.bcon { flex: 1; background: #0f3460; border-radius: 4px; height: 24px; }
+.bfill { height: 100%; border-radius: 4px; display: flex; align-items: center; padding-left: 10px; }
+.blbl { font-size: 11px; font-weight: 700; color: white; }
+.pts { font-size: 13px; font-weight: 700; width: 36px; text-align: right; }
+.timeline { position: relative; padding: 10px 0; }
+.tline { position: absolute; left: 50%; top: 0; bottom: 0; width: 2px; background: #444; transform: translateX(-50%); }
+.moment { display: flex; align-items: flex-start; margin-bottom: 40px; position: relative; }
+.moment.left { flex-direction: row; }
+.moment.right { flex-direction: row-reverse; }
+.mcard { width: calc(50% - 70px); background: #16213e; border-radius: 10px; padding: 14px 16px; border: 1px solid #333; }
+.moment.left .mcard { margin-right: auto; }
+.moment.right .mcard { margin-left: auto; }
+.ccenter { width: 140px; flex-shrink: 0; display: flex; flex-direction: column; align-items: center; gap: 6px; position: relative; z-index: 2; }
+.flag-circle { width: 88px; height: 88px; border-radius: 50%; overflow: hidden; border: 3px solid #333; flex-shrink: 0; }
+.flag-circle svg { width: 100%; height: 100%; display: block; }
+.rbadge { font-size: 10px; font-weight: 700; color: white; background: #E10600; padding: 2px 8px; border-radius: 8px; }
+.dot { position: absolute; left: 50%; top: 40px; width: 14px; height: 14px; background: #E10600; border-radius: 50%; border: 2px solid #1a1a2e; transform: translateX(-50%); z-index: 3; }
+.mrace { font-size: 10px; color: #E10600; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 3px; }
+.mtitle { font-size: 14px; font-weight: 700; color: white; margin-bottom: 6px; line-height: 1.3; }
+.mdesc { font-size: 11px; color: #aaa; line-height: 1.6; }
+.wbadge { display: inline-block; font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 5px; margin-top: 8px; }
+.ver { background: #1E3A5F; color: #7EB8F7; }
+.ham { background: #003d3a; color: #00E5D8; }
+.oth { background: #2a2a2a; color: #ccc; }
+.legend { display: flex; gap: 20px; flex-wrap: wrap; }
+.leg-item { display: flex; align-items: center; gap: 6px; font-size: 11px; color: #aaa; }
+.leg-dot { width: 10px; height: 10px; border-radius: 2px; }
+</style>
+</head>
+<body>
+
+<div class="page-title">2021 F1 Season — Critical Moments</div>
+<div class="page-sub">The most dramatic championship battle in modern Formula 1 history</div>
+
+<div class="champ-bar">
+  <div class="champ-title">Final Championship Standings</div>
+  <div class="drow">
+    <div class="dname" style="color:#7EB8F7;">M. Verstappen</div>
+    <div class="bcon"><div class="bfill" style="width:100%;background:#1E3A5F;"><span class="blbl">395.5 pts — World Champion</span></div></div>
+    <div class="pts" style="color:#7EB8F7;">1st</div>
+  </div>
+  <div class="drow">
+    <div class="dname" style="color:#00E5D8;">L. Hamilton</div>
+    <div class="bcon"><div class="bfill" style="width:97.7%;background:#007a73;"><span class="blbl">387.5 pts</span></div></div>
+    <div class="pts" style="color:#00E5D8;">2nd</div>
+  </div>
+</div>
+
+<div class="timeline">
+<div class="tline"></div>
+
+<!-- R1 Bahrain -->
+<div class="moment left">
+  <div class="mcard">
+    <div class="mrace">Round 1 — Bahrain Grand Prix</div>
+    <div class="mtitle">The season opener sets the tone</div>
+    <div class="mdesc">Verstappen overtakes Hamilton on lap 53 at Turn 4 but is ordered to give the position back after exceeding track limits. Hamilton wins, but the fierce rivalry immediately ignites from race one.</div>
+    <span class="wbadge ham">Hamilton wins — 25 pts</span>
+  </div>
+  <div class="ccenter">
+    
+    <div class="flag-circle">
+      <!-- Bahrain flag: red and white with emblem -->
+      <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+        <rect width="100" height="100" fill="#CE1126"/>
+        <polygon points="0,0 38,10 0,20 38,30 0,40 38,50 0,60 38,70 0,80 38,90 0,100 0,0" fill="white"/>
+      </svg>
+    </div>
+    <div class="rbadge">R1</div>
+  </div>
+  <div style="width:calc(50% - 70px);"></div>
+</div>
+
+<!-- R2 Imola (Italy) -->
+<div class="moment right">
+  <div class="mcard">
+    <div class="mrace">Round 2 — Emilia Romagna Grand Prix</div>
+    <div class="mtitle">Verstappen blocks, Hamilton spins</div>
+    <div class="mdesc">At Tosa corner, Verstappen denies Hamilton passage wheel-to-wheel. Hamilton spins through the gravel and damages his front wing. Verstappen wins and takes the championship lead for the first time.</div>
+    <span class="wbadge ver">Verstappen wins — 26 pts</span>
+  </div>
+  <div class="ccenter">
+    
+    <div class="flag-circle">
+      <!-- Italy flag: green, white, red vertical -->
+      <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+        <rect width="100" height="100" fill="#CE2B37"/>
+        <rect width="67" height="100" fill="white"/>
+        <rect width="33" height="100" fill="#009246"/>
+      </svg>
+    </div>
+    <div class="rbadge">R2</div>
+  </div>
+  <div style="width:calc(50% - 70px);"></div>
+</div>
+
+<!-- R6 Baku (Azerbaijan) -->
+<div class="moment left">
+  <div class="mcard">
+    <div class="mrace">Round 6 — Azerbaijan Grand Prix</div>
+    <div class="mtitle">Verstappen's tyre blowout costs the lead</div>
+    <div class="mdesc">Leading with 5 laps remaining at over 300 km/h on the pit straight, Verstappen suffers a catastrophic rear tyre blowout. Pérez wins for Red Bull. Hamilton misses a chance to score heavily after braking too late at the restart.</div>
+    <span class="wbadge oth">Pérez wins — Verstappen DNF</span>
+  </div>
+  <div class="ccenter">
+    
+    <div class="flag-circle">
+      <!-- Azerbaijan flag: blue, red, green horizontal with crescent and star -->
+      <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+        <rect width="100" height="100" fill="#EF3340"/>
+        <rect width="100" height="33" fill="#0092BC"/>
+        <rect y="67" width="100" height="33" fill="#509E2F"/>
+        <circle cx="50" cy="50" r="13" fill="white"/>
+        <circle cx="54" cy="50" r="10" fill="#EF3340"/>
+        <polygon points="64,50 67,44 67,56" fill="white"/>
+        <polygon points="68,47 70,50 68,53 72,50" fill="white"/>
+      </svg>
+    </div>
+    <div class="rbadge">R6</div>
+  </div>
+  <div style="width:calc(50% - 70px);"></div>
+</div>
+
+<!-- R10 Silverstone (GB) -->
+<div class="moment right">
+  <div class="mcard">
+    <div class="mrace">Round 10 — British Grand Prix</div>
+    <div class="mtitle">Hamilton crashes Verstappen on lap 1</div>
+    <div class="mdesc">At the high-speed Copse corner on lap 1, the two cars make contact. Verstappen barrel-rolls into the barrier at enormous speed and is taken to hospital. Hamilton gets a 10-second penalty but still wins to the delight of the home crowd.</div>
+    <span class="wbadge ham">Hamilton wins — Verstappen hospitalized</span>
+  </div>
+  <div class="ccenter">
+    
+    <div class="flag-circle">
+      <!-- UK flag: Union Jack -->
+      <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+        <rect width="100" height="100" fill="#012169"/>
+        <line x1="0" y1="0" x2="100" y2="100" stroke="white" stroke-width="20"/>
+        <line x1="100" y1="0" x2="0" y2="100" stroke="white" stroke-width="20"/>
+        <line x1="0" y1="0" x2="100" y2="100" stroke="#C8102E" stroke-width="12"/>
+        <line x1="100" y1="0" x2="0" y2="100" stroke="#C8102E" stroke-width="12"/>
+        <rect x="0" y="40" width="100" height="20" fill="white"/>
+        <rect x="40" y="0" width="20" height="100" fill="white"/>
+        <rect x="0" y="43" width="100" height="14" fill="#C8102E"/>
+        <rect x="43" y="0" width="14" height="100" fill="#C8102E"/>
+      </svg>
+    </div>
+    <div class="rbadge">R10</div>
+  </div>
+  <div style="width:calc(50% - 70px);"></div>
+</div>
+
+<!-- R14 Monza (Italy) -->
+<div class="moment left">
+  <div class="mcard">
+    <div class="mrace">Round 14 — Italian Grand Prix</div>
+    <div class="mtitle">Both title rivals crash out at Monza</div>
+    <div class="mdesc">After Hamilton pits ahead of Verstappen, both fight aggressively into the chicane. Verstappen's car mounts over Hamilton's Mercedes with the Red Bull tyre resting on Hamilton's helmet — saved only by the halo. Both retire. Ricciardo wins for McLaren.</div>
+    <span class="wbadge oth">Ricciardo wins — Both DNF</span>
+  </div>
+  <div class="ccenter">
+    
+    <div class="flag-circle">
+      <!-- Italy flag again -->
+      <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+        <rect width="100" height="100" fill="#CE2B37"/>
+        <rect width="67" height="100" fill="white"/>
+        <rect width="33" height="100" fill="#009246"/>
+      </svg>
+    </div>
+    <div class="rbadge">R14</div>
+  </div>
+  <div style="width:calc(50% - 70px);"></div>
+</div>
+
+<!-- R19 Sao Paulo (Brazil) -->
+<div class="moment right">
+  <div class="mcard">
+    <div class="mrace">Round 19 — São Paulo Grand Prix</div>
+    <div class="mtitle">Hamilton's greatest comeback drive</div>
+    <div class="mdesc">Starting 10th after a grid penalty, Hamilton battles through the entire field. He passes Verstappen around the outside at Turn 4 in an iconic overtake and wins by over 10 seconds — widely considered the drive of the decade.</div>
+    <span class="wbadge ham">Hamilton wins from P10</span>
+  </div>
+  <div class="ccenter">
+    
+    <div class="flag-circle">
+      <!-- Brazil flag: green, yellow diamond, blue circle -->
+      <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+        <rect width="100" height="100" fill="#009C3B"/>
+        <polygon points="50,8 92,50 50,92 8,50" fill="#FFDF00"/>
+        <circle cx="50" cy="50" r="22" fill="#002776"/>
+        <path d="M30,44 Q50,36 70,44" stroke="white" stroke-width="3" fill="none"/>
+        <rect x="28" y="48" width="44" height="5" fill="white" rx="2"/>
+      </svg>
+    </div>
+    <div class="rbadge">R19</div>
+  </div>
+  <div style="width:calc(50% - 70px);"></div>
+</div>
+
+<!-- R21 Saudi Arabia -->
+<div class="moment left">
+  <div class="mcard">
+    <div class="mrace">Round 21 — Saudi Arabian Grand Prix</div>
+    <div class="mtitle">Controversy in Jeddah — level on points</div>
+    <div class="mdesc">In a chaotic race with two red flags, Verstappen deliberately slows causing Hamilton to rear-end him. Despite a penalty for Verstappen, Hamilton wins. Going into the finale both drivers are tied on points — the first time since 1974.</div>
+    <span class="wbadge ham">Hamilton wins — tied on points</span>
+  </div>
+  <div class="ccenter">
+    
+    <div class="flag-circle">
+      <!-- Saudi Arabia flag: green with white Arabic text and sword -->
+      <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+        <rect width="100" height="100" fill="#006C35"/>
+        <text x="50" y="42" font-size="11" fill="white" text-anchor="middle" font-family="Arial">لا إله إلا الله</text>
+        <text x="50" y="56" font-size="9" fill="white" text-anchor="middle" font-family="Arial">محمد رسول الله</text>
+        <rect x="25" y="62" width="50" height="3" fill="white" rx="1"/>
+        <polygon points="50,68 45,62 55,62" fill="white"/>
+        <rect x="47" y="62" width="6" height="4" fill="#006C35"/>
+      </svg>
+    </div>
+    <div class="rbadge">R21</div>
+  </div>
+  <div style="width:calc(50% - 70px);"></div>
+</div>
+
+<!-- R22 Abu Dhabi (UAE) -->
+<div class="moment right">
+  <div class="mcard">
+    <div class="mrace">Round 22 — Abu Dhabi Grand Prix</div>
+    <div class="mtitle">Verstappen wins the title on the final lap</div>
+    <div class="mdesc">In the most controversial finish in modern F1, a late safety car allows only the lapped cars between the two title rivals to unlap themselves. Verstappen, on fresh soft tyres, overtakes Hamilton on the very last lap to win his first World Championship by just 8 points.</div>
+    <span class="wbadge ver">Verstappen — 2021 World Champion</span>
+  </div>
+  <div class="ccenter">
+    
+    <div class="flag-circle">
+      <!-- UAE flag: green, white, black horizontal + red vertical bar -->
+      <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+        <rect width="100" height="100" fill="black"/>
+        <rect y="0" width="100" height="33" fill="#00732F"/>
+        <rect y="33" width="100" height="34" fill="white"/>
+        <rect x="0" y="0" width="28" height="100" fill="#FF0000"/>
+      </svg>
+    </div>
+    <div class="rbadge">R22</div>
+  </div>
+  <div style="width:calc(50% - 70px);"></div>
+</div>
+
+</div>
+
+<div style="background:#16213e;border-radius:10px;padding:12px 16px;margin-top:8px;">
+  <div class="legend">
+    <div class="leg-item"><div class="leg-dot" style="background:#1E3A5F;"></div>Verstappen / Red Bull</div>
+    <div class="leg-item"><div class="leg-dot" style="background:#007a73;"></div>Hamilton / Mercedes</div>
+    <div class="leg-item"><div class="leg-dot" style="background:#E10600;"></div>Race incident</div>
+    <div style="margin-left:auto;font-size:11px;color:#666;">2021 FIA Formula One World Championship</div>
+  </div>
+</div>
+
+</body>
+</html>
